@@ -12,7 +12,7 @@ import MeetingDetail from '../components/MeetingDetail';
 const Index: React.FC = () => {
   const [professionals, setProfessionals] = useLocalStorage<Professional[]>('professionals', []);
   const [meetings, setMeetings] = useLocalStorage<Meeting[]>('meetings', []);
-  const [activeTab, setActiveTab] = useState<'professionals' | 'meetings'>('professionals');
+  const [activeTab, setActiveTab] = useState<'professionals' | 'meetings'>('meetings');
   const [selectedMeeting, setSelectedMeeting] = useState<Meeting | null>(null);
 
   // Gestion des professionnels

@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Meeting, Professional, Participant } from '../types';
 import SignatureCanvas from './SignatureCanvas';
 import { exportToPDF } from '../utils/pdfExport';
@@ -21,6 +20,18 @@ const MeetingDetail: React.FC<MeetingDetailProps> = ({
   const [selectedProfessionalId, setSelectedProfessionalId] = useState('');
   const [signingParticipant, setSigningParticipant] = useState<Participant | null>(null);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+
+  // Fermer le menu si on clique ailleurs
+  useEffect(() => {
+    const handleClickOutside = () => {
+      setOpenMenuId(null);
+    };
+
+    if (openMenuId) {
+      document.addEventListener('click', handleClickOutside);
+      return () => document.removeEventListener('click', handleClickOutside);
+    }
+  }, [openMenuId]);
 
   const availableProfessionals = professionals.filter(
     (prof) => !meeting.participants.some((p) => p.professionalId === prof.id)
@@ -80,6 +91,11 @@ const MeetingDetail: React.FC<MeetingDetailProps> = ({
 
   const handleExportPDF = () => {
     exportToPDF(meeting, professionals);
+  };
+
+  const handleMenuToggle = (participantId: string, event: React.MouseEvent) => {
+    event.stopPropagation();
+    setOpenMenuId(openMenuId === participantId ? null : participantId);
   };
 
   return (
@@ -174,15 +190,18 @@ const MeetingDetail: React.FC<MeetingDetailProps> = ({
                   <td className="p-4 text-center">
                     <div className="relative">
                       <button
-                        onClick={() => setOpenMenuId(openMenuId === participant.id ? null : participant.id)}
+                        onClick={(e) => handleMenuToggle(participant.id, e)}
                         className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
                       >
                         ⋮
                       </button>
                       {openMenuId === participant.id && (
-                        <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-10 border">
+                        <div className="absolute right-0 top-full mt-1 w-48 bg-white rounded-lg shadow-lg z-20 border">
                           <button
-                            onClick={() => handleRemoveParticipant(participant.id)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRemoveParticipant(participant.id);
+                            }}
                             className="w-full text-left px-4 py-2 hover:bg-red-50 text-red-600 rounded-lg"
                           >
                             🗑️ Retirer de la réunion
