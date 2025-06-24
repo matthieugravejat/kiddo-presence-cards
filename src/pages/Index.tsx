@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Professional, Meeting } from '../types';
 import { useLocalStorage } from '../hooks/useLocalStorage';
+import { useFilesystemStorage } from '@/hooks/useFilesystemStorage';
 import Layout from '../components/Layout';
 import Header from '../components/Header';
 import TabNavigation from '../components/TabNavigation';
@@ -10,8 +11,10 @@ import MeetingsList from '../components/MeetingsList';
 import MeetingDetail from '../components/MeetingDetail';
 
 const Index: React.FC = () => {
-  const [professionals, setProfessionals] = useLocalStorage<Professional[]>('professionals', []);
-  const [meetings, setMeetings] = useLocalStorage<Meeting[]>('meetings', []);
+  //const [professionals, setProfessionals] = useLocalStorage<Professional[]>('professionals', []);
+  //const [meetings, setMeetings] = useLocalStorage<Meeting[]>('meetings', []);
+  const [professionals, setProfessionals] = useFilesystemStorage<Professional[]>('professionals', []);
+  const [meetings, setMeetings] = useFilesystemStorage<Meeting[]>('meetings.json', []);
   const [activeTab, setActiveTab] = useState<'professionals' | 'meetings'>('meetings');
   const [selectedMeeting, setSelectedMeeting] = useState<Meeting | null>(null);
 
