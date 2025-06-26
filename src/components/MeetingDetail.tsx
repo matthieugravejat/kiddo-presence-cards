@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Meeting, Professional, Participant } from '../types';
 import SignatureCanvas from './SignatureCanvas';
-import { exportToPDF } from '../utils/pdfExport';
+//import { exportToPDF } from '../utils/pdfExport';
+
 
 interface MeetingDetailProps {
   meeting: Meeting;
@@ -90,8 +91,9 @@ const MeetingDetail: React.FC<MeetingDetailProps> = ({
   };
 
   const handleExportPDF = () => {
-    exportToPDF(meeting, professionals);
+    //exportToPDF(meeting, professionals);
   };
+
 
   const handleMenuToggle = (participantId: string, event: React.MouseEvent) => {
     event.stopPropagation();
@@ -108,7 +110,7 @@ const MeetingDetail: React.FC<MeetingDetailProps> = ({
           ← Retour aux réunions
         </button>
         <button
-          onClick={handleExportPDF}
+          //onClick={handleExportPDF}
           className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 shadow-sm"
         >
           📄 Exporter PDF

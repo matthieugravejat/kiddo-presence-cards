@@ -2,7 +2,11 @@
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { Meeting, Professional } from '../types';
+import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
+import autoTable from 'jspdf-autotable';
 
+
+/*
 export const exportToPDF = async (meeting: Meeting, professionals: Professional[]) => {
   try {
     // Créer un élément temporaire pour le contenu du PDF
@@ -140,3 +144,42 @@ export const exportToPDF = async (meeting: Meeting, professionals: Professional[
     alert('Une erreur est survenue lors de l\'export PDF. Veuillez réessayer.');
   }
 };
+
+
+*/
+export const exportToPDF = async (meeting: Meeting, professionals: Professional[]) => {
+  const doc = new jsPDF();
+
+  doc.setFontSize(16);
+  doc.text('Feuille de présence', 14, 20);
+  doc.setFontSize(12);
+  doc.text(`Titre : ${meeting.title}`, 14, 30);
+  doc.text(`Date : ${new Date(meeting.date).toLocaleDateString()}`, 14, 37);
+
+  const tableData = meeting.participants.map((p, index) => {
+    const prof = professionals.find(pro => pro.id === p.professionalId);
+    return [
+      index + 1,
+      `${prof?.firstName || ''} ${prof?.lastName || ''}`,
+      '✍️'
+    ];
+  });
+  const autoTableFn = (autoTable as any) as typeof autoTable;
+  autoTable(doc, {
+    startY: 45,
+    head: [['#', 'Nom', 'Signature']],
+    body: tableData,
+  });
+
+  const base64PDF = doc.output('datauristring').split(',')[1];
+
+  await Filesystem.writeFile({
+    path: `presence-${meeting.title}-${Date.now()}.pdf`,
+    data: base64PDF,
+    directory: Directory.Documents,
+    encoding: 'base64' as any,
+  });
+
+  console.log("PDF enregistré dans le dossier Documents.");
+};
+
